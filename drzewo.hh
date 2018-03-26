@@ -42,6 +42,10 @@ public:
   void Preorder(ED* wezel);
   void Postorder(ED* wezel);
   void Inorder(ED* wezel);
+
+  void Test111();
+  void Test112();
+  void Test113();
 };
 
 
