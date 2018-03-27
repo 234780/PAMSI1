@@ -38,27 +38,26 @@ ED* Drzewo::RotujLL(ED* wezel){
   ED* rodzic = wezel->ojciec;
 
   wezel->lewy = nowy->prawy;
-  if(wezel->lewy != 0)
-    wezel->lewy->ojciec = wezel;
-  nowy->prawy = wezel;
-  nowy->ojciec = rodzic;
+  if(wezel->lewy != NULL) // jesli lewy syn istnieje (w sumie lewy wnuk pierwtnego wezla)
+    wezel->lewy->ojciec = wezel; //to ustaw mu nowego ojca
+  
+  nowy->prawy = wezel; 
+  nowy->ojciec = rodzic; 
   wezel->ojciec = nowy;
-  if(rodzic!=0){
+  
+  if(rodzic!=NULL){ // jesli wezel nie byl korzeniem
     if(rodzic->lewy == wezel)
       rodzic->lewy = nowy;
     else
       rodzic = rodzic->prawy = nowy;
   }
-  else korzen = nowy;
+  else //jesli byl korzeniem
+    korzen = nowy; 
 
-  if(nowy->wsprownowagi == 1){ //jesli bylo 1
-    wezel->wsprownowagi = 0;
-    nowy->wsprownowagi = 0;
-  }
-  else{
-    wezel->wsprownowagi = 1; 
-    nowy->wsprownowagi = -1;
-  }
+  //ustawiamy wspolczynniki rownowagi ;)
+    wezel->wsprownowagi = Wysokosc(wezel->lewy)-Wysokosc(wezel->prawy);
+    nowy->wsprownowagi = Wysokosc(nowy->lewy)-Wysokosc(nowy->prawy);
+    
   return nowy;
 }
 
@@ -70,27 +69,25 @@ ED* Drzewo::RotujRR(ED* wezel){
 
   wezel->prawy = nowy->lewy;
   
-  if(wezel->prawy!=0)
-    wezel->prawy->ojciec = wezel;
+  if(wezel->prawy!=NULL) //jesli prawy syn istnieje (czyli w sumie prawy wnuk pierwotnego wezla)
+    wezel->prawy->ojciec = wezel; //to przyporzadkuj ojca
+  
   nowy->lewy = wezel;
-  nowy->ojciec=rodzic;
+  nowy->ojciec = rodzic;
   wezel->ojciec = nowy;
-  if(rodzic != 0){
+  
+  if(rodzic != NULL){ //jesli wezel nie byl korzeniem
     if(rodzic->lewy == wezel)
       rodzic->lewy = nowy;
     else
       rodzic->prawy = nowy;
-  }//koniec if(rodzic!=0)
-  else korzen = nowy;
+  }
+  else //jesli byl korzeniem
+    korzen = nowy;
 
-  if(nowy->wsprownowagi == -1){
-    wezel->wsprownowagi = 0;
-    nowy->wsprownowagi = 0;
-  }
-  else{
-    wezel->wsprownowagi = -1;
-    nowy->wsprownowagi = 1;
-  }
+  // i ustawiamy wspolczynniki rownowagi
+  wezel->wsprownowagi = Wysokosc(wezel->lewy)-Wysokosc(wezel->prawy);
+  nowy->wsprownowagi = Wysokosc(nowy->lewy)-Wysokosc(nowy->prawy);
   return nowy;
 }
 
@@ -102,8 +99,9 @@ ED* Drzewo::RotujRL(ED* wezel){
   ED* rodzic = wezel->ojciec;
 
   pomocniczy->lewy = nowy->prawy;
-  if(pomocniczy->lewy != 0) //jesli istnieje lewy syn
-    pomocniczy->lewy->ojciec = pomocniczy;
+  
+  if(pomocniczy->lewy != 0) //jesli istnieje lewy syn (a w sumie prawo-lewy wnuk
+    pomocniczy->lewy->ojciec = pomocniczy; // to ustawiamy mu odpowiednio ojca
   
   wezel->prawy = nowy->lewy;
   if(wezel->prawy != 0) // jesli istnieje prawy syn
@@ -112,27 +110,20 @@ ED* Drzewo::RotujRL(ED* wezel){
   nowy->prawy = pomocniczy;
   wezel->ojciec = pomocniczy->ojciec = nowy;
   nowy->ojciec = rodzic;
-  if(rodzic!=0){ //jesli wezel nie jest korzeniem
+  if(rodzic!=0){ //jesli wezel nie byl korzeniem
     if(rodzic->lewy == wezel)
       rodzic->lewy = nowy;
     else
       rodzic->prawy = nowy;
   }
   else
-    korzen = nowy; //jesli jest juz korzeniem
+    korzen = nowy; //jesli byl korzeniem
 
-  if(nowy->wsprownowagi == -1)
-    wezel->wsprownowagi = 1;
-  else
-    wezel->wsprownowagi = 0;
-
-  if(nowy->wsprownowagi == 1)
-    pomocniczy->wsprownowagi = -1;
-  else
-    pomocniczy->wsprownowagi = 0;
- 
-  nowy->wsprownowagi = 0;
-
+  // i wspolczynniki rownowagi:
+  wezel->wsprownowagi = Wysokosc(wezel->lewy)-Wysokosc(wezel->prawy);
+  nowy->wsprownowagi = Wysokosc(nowy->lewy)-Wysokosc(nowy->prawy);
+  pomocniczy->wsprownowagi = Wysokosc(pomocniczy->lewy)-Wysokosc(pomocniczy->prawy);
+  
   return nowy;
 }
 
@@ -142,57 +133,53 @@ ED* Drzewo::RotujLR(ED* wezel){
   ED* rodzic = wezel->ojciec;
 
   pomocniczy->prawy = nowy->lewy;
-  if(pomocniczy->prawy!=0)
-    pomocniczy->prawy->ojciec = pomocniczy;
+  
+  if(pomocniczy->prawy!=0) //jesli tstnieje lewo-prawy wnuk
+    pomocniczy->prawy->ojciec = pomocniczy; //to ustawiamy mu ojca
   
   wezel->lewy = nowy->prawy;
-  if(wezel->lewy!=0)
+  if(wezel->lewy!=NULL) 
     wezel->lewy->ojciec = wezel;
   
   nowy->prawy = wezel;
   nowy->lewy = pomocniczy;
   wezel->ojciec = pomocniczy->ojciec = nowy;
   nowy->ojciec = rodzic;
-  if(rodzic != 0){ //jesli rodzic istnieje
+  
+  if(rodzic != NULL){ //jesli wezel nie byl korzeniem
     if(rodzic->lewy == wezel)
       rodzic->lewy = nowy;
     else
       rodzic->prawy = nowy;
-  }//koniec if(rodzic!=0)
-  else
+  }
+  else // i jesli wezel byl korzeniem
     korzen = nowy; //ustaw jako korzen
 
-  
-  if(nowy->wsprownowagi == 1)
-    wezel->wsprownowagi = -1;
-  else
-    wezel->wsprownowagi = 0;
-
-  if(nowy->wsprownowagi == -1)
-    pomocniczy->wsprownowagi = 1;
-  else
-    pomocniczy->wsprownowagi = 0;
- 
-  nowy->wsprownowagi = 0;
+   // i wspolczynniki rownowagi:
+  wezel->wsprownowagi = Wysokosc(wezel->lewy)-Wysokosc(wezel->prawy);
+  nowy->wsprownowagi = Wysokosc(nowy->lewy)-Wysokosc(nowy->prawy);
+  pomocniczy->wsprownowagi = Wysokosc(pomocniczy->lewy)-Wysokosc(pomocniczy->prawy);
   return nowy;
 }
 
 bool Drzewo::Dodaj(int element){
   ED* nowy=new ED;
-  ED* ojciec=0;
-  ED* aktualny=korzen;
+  ED* ojciec=NULL;
+  ED* aktualny=korzen; //do przejscia po drzewie
 
-  nowy->wartosc=element;
-  nowy->lewy=0;
-  nowy->prawy=0;
+  //ustawiamy wartosci nowego elementu, bedzie lisciem, wiec wsprownowagi=0
+  nowy->wartosc=element; 
+  nowy->lewy=NULL;
+  nowy->prawy=NULL;
   nowy->wsprownowagi=0;
 
-  while(aktualny!=0){ //jesli jestesmy jeszcze w drzewie
+  //szukamy czy taki element jest juz w drzewie
+  while(aktualny!=NULL){ //jesli jestesmy jeszcze w drzewie
     if(element==aktualny->wartosc){
       delete nowy;
-      return false;
+      return false; //jesli jest juz taki
     }
-    else{
+    else{ //jesli nie ma elementu w drzewie, to szukamy gdzie go wstawic
       ojciec=aktualny;
       if(element<aktualny->wartosc)
 	aktualny=aktualny->lewy;
@@ -201,23 +188,23 @@ bool Drzewo::Dodaj(int element){
     }
   }//koniec while
 
-  nowy->ojciec=ojciec;
+  nowy->ojciec=ojciec; //ojciec wskazuje gdzie go mozna wsadzic
   if(ojciec==0){ //jesli drzewo jest puste
     korzen=nowy;
-    return true;
+    return true; // i mamy jednoelementowe drzewko ;)
   }
-  else{
-    if(element<ojciec->wartosc)
+  else{ //a jesli drzewo nie bylo puste...
+    if(element<ojciec->wartosc) // to w zaleznosci od wartosci wpisz nowy w miejsce syna
       ojciec->lewy=nowy;
     else
       ojciec->prawy=nowy;
 
-    if(ojciec->wsprownowagi!=0){
-      ojciec->wsprownowagi=0;
-      return true;
+    if(ojciec->wsprownowagi!=0){ // jesli ojciec mial jednego syna
+      ojciec->wsprownowagi=0; // to juz ma dwoch
+      return true; // czyli sukces!
     }
-    else{
-      if(ojciec->lewy==nowy)
+    else{// gdy ojciec mial wsprownowagi==0
+      if(ojciec->lewy==nowy) // to w zaleznosci ktorym synem jest nowy
 	ojciec->wsprownowagi=1;
       else
 	ojciec->wsprownowagi=-1;
@@ -225,62 +212,62 @@ bool Drzewo::Dodaj(int element){
       aktualny=ojciec;
       ojciec=ojciec->ojciec;
 
-      while(ojciec!=0){ //przeszukujemy drzzewo
+      while(ojciec!=NULL){ //przeszukujemy drzzewo w poszuiwaniu niezrownowazonych wezlow
 	if(ojciec->wsprownowagi!=0){
-	  if(ojciec->wsprownowagi==-1){
-	    if(ojciec->lewy==aktualny){
-	      ojciec->wsprownowagi=0;
-	      return true;
+	  if(ojciec->wsprownowagi==-1){//przewaza prawa galaz
+	    if(ojciec->lewy==aktualny){ // i do lewej wpisalismy
+	      ojciec->wsprownowagi=0; // to juz jest rownowaga ;)
+	      return true; //czyli wszystko gra!
 	    }
-	    else{
-	      if(aktualny->wsprownowagi==1)
-		RotujRL(ojciec);
-	      else
-		RotujRR(ojciec);
-	      return true;
+	    else{//a jesli polaczenie jest z prawej
+	      if(aktualny->wsprownowagi==1) // i w nowym przewaza lewa
+		RotujRL(ojciec); //to rotujemy prawa-lewa
+	      else// jesli w nowym przewaza prawa
+		RotujRR(ojciec); // to rotujemy prawa-prawa
+	      return true; //i znow sukces 
 	    }
-	  }
-	  else{
-	    if(ojciec->prawy==aktualny){
-	      ojciec->wsprownowagi=0;
-	      return true;
+	  }//if(ojciec->wsprownowagi==-1)
+	  else{// wsprownowagi ojca==1, czyli przewaza lewa galaz
+	    if(ojciec->prawy==aktualny){ // wpisalismy do prawej?
+	      ojciec->wsprownowagi=0; // to rownowaga!
+	      return true;// i sukces
 	    }
-	    else{
-	      if(aktualny->wsprownowagi==-1)
-		RotujLR(ojciec);
-	      else
-		RotujLL(ojciec);
-	      return true;
-	    }
-	  }
-	}
-	else{
-	  if(ojciec->lewy==aktualny)
-	    ojciec->wsprownowagi=1;
-	  else
-	    ojciec->wsprownowagi=-1;
+	    else{// wspisalismy po lewej?
+	      if(aktualny->wsprownowagi==-1) // przewaza prawa?
+		RotujLR(ojciec); // polaczenie lewa-prawa
+	      else // przewaza lewa?
+		RotujLL(ojciec); // polaczenie lewa-lewa
+	      return true; // i tez pasuje ;)
+	    }//else
+	  }//else
+	}// koniec if(ojciec->wsprownowagi!=0)
+	else{// jesli wsp rownowagi ojca ==0
+	  ojciec->wsprownowagi=Wysokosc(ojciec->lewy)-Wysokosc(ojciec->prawy);// to ustaw mu wysokosc
 
+	  // i przygotuj warunki do kolejnego obrotu petli
 	  aktualny=ojciec;
 	  ojciec=ojciec->ojciec;
 	}
       }//koniec while
-      return true;
+      return true; // wszystko sie udalo!!!
     }
-
-  }
-    
+  }  
 }
 
+//Rekurencyjnie wylicza wysokosc 
 int Drzewo::Wysokosc(ED* wezel){
   int wysokosc;
-  if(wezel->lewy==0 && wezel->prawy==0)
+  if(wezel==NULL) //jesli wezel nie istnieje...
+    return 0;
+  if(wezel->lewy==NULL && wezel->prawy==NULL) // jesli obaj synowie nie istnieja
     return 1;
-  else if(wezel->lewy==0||wezel->prawy==0)
+  else if(wezel->lewy==NULL||wezel->prawy==NULL) //jesli nie istnieje tylko jeden z synow
     return 2;
-  else
-  wysokosc=max(Wysokosc(wezel->lewy), Wysokosc(wezel->prawy))+1;
+  else // a jak istnieja oboje
+    wysokosc=max(Wysokosc(wezel->lewy), Wysokosc(wezel->prawy))+1; // to wyliczamy rekurencyjnie, bierzemy wieksza wartosc i dodajemy 1 
   return wysokosc;
 }
+
 
 int Drzewo::Korzen(){
   return korzen->wartosc;
@@ -290,76 +277,78 @@ int Drzewo::Korzen(){
 ED* Drzewo::Poprzednik(ED* wezel){ //wezel o najwiekszej mozliwej wartosci, mniejszej od wezel->wartosc
   ED* pomocniczy;
 
-  if(wezel!=0){
-    if(wezel->lewy!=0){
+  if(wezel!=NULL){ // jesli wezel istnieje
+    if(wezel->lewy!=NULL){ // i jego lewy syn tez
       wezel = wezel->lewy;
-      while(wezel->prawy!=0)
+      while(wezel->prawy!=NULL)
 	wezel=wezel->prawy;
     }//koniec if
-    else
+    else // jesli wezel nie istnieje
       do{
         pomocniczy=wezel;
         wezel=wezel->ojciec;
-      } while(wezel!=0 && wezel->prawy!=pomocniczy);
+      } while(wezel!=NULL && wezel->prawy!=pomocniczy);
   }//koniec if
-  return wezel;
+  return wezel; 
 }
 
+//szuka elementu o danej wartosci w drzewie
 ED* Drzewo::Znajdz(int element){
   ED* wezel=korzen;
   
-  while(wezel!=0){
-    if(wezel->wartosc!=element){
-      if(element<wezel->wartosc)
+  while(wezel!=NULL){ // jesli wezel na cokolwiek wskazuje
+    if(wezel->wartosc!=element){ // to nie szukany?
+      if(element<wezel->wartosc) // jak szukamy mniejszej to na lewo
 	wezel=wezel->lewy;
-      else
+      else // jak wiekszej to na prawo
 	wezel=wezel->prawy;
     }
-    else
+    else // znalezlismy czego szukalismy!
       return wezel;
   }//koniec while
-  return 0;
+  return NULL;// nie bylo takiej wartosci? 
 }
 
 
+//metoda powstala dzieki duzej pomocy http://eduinf.waw.pl/inf/alg/001_search/0119.php#P2
 ED* Drzewo::Usun(ED* wezel)
 {
   ED  *A,*B,*C;
   bool zagniezdzenie;
 
-  if(wezel->lewy!=0 && wezel->prawy!=0){ //jesli istnieja oboje synowie
+  if(wezel->lewy!=NULL && wezel->prawy!=NULL){ //jesli istnieja oboje synowie
     B=Usun(Poprzednik(wezel));
     zagniezdzenie=false;
   }//koniec if
   else{
-    if(wezel->lewy!=0){
+    if(wezel->lewy!=NULL){
       B=wezel->lewy;
-      wezel->lewy=0;
+      wezel->lewy=NULL;
     }
     else{
       B=wezel->prawy;
-      wezel->prawy=0;
+      wezel->prawy=NULL;
     }
     wezel->wsprownowagi=0;
     zagniezdzenie=true;
   }//koniec else
 
-  if(B!=0){
+  if(B!=NULL){
     B->ojciec=wezel->ojciec;
     B->lewy=wezel->lewy;
 
-    if(B->lewy!=0)
+    if(B->lewy!=NULL)
       B->lewy->ojciec=B;
 
     B->prawy=wezel->prawy;
 
-    if(B->prawy!=0)
+    if(B->prawy!=NULL)
       B->prawy->ojciec=B;
     
     B->wsprownowagi=wezel->wsprownowagi;
   }//koniec if
 
-  if(wezel->ojciec!=0) {
+  if(wezel->ojciec!=NULL) {
     if(wezel->ojciec->lewy==wezel)
       wezel->ojciec->lewy=B;
     else
@@ -371,7 +360,7 @@ ED* Drzewo::Usun(ED* wezel)
   if(zagniezdzenie!=0){
     C=B;
     B=wezel->ojciec;
-    while(B!=0){
+    while(B!=NULL){
       if(B->wsprownowagi==0){              // Przypadek nr 1
         if(B->lewy==C)
 	  B->wsprownowagi=-1;
@@ -423,52 +412,59 @@ ED* Drzewo::Usun(ED* wezel)
 }
 
 ED* Drzewo::Usun(int element){
-  if(Znajdz(element)==false)
-    return 0;
-  return Usun(Znajdz(element));
+  if(Znajdz(element)==false) //jesli taki element juz jest w drzewie
+    return NULL;
+  return Usun(Znajdz(element));// i jesli nie ma jestvze takiego
 }
 
+//zwraca najwieksza wartosc na drzewie
 int Drzewo::Najwiekszy(){
   ED* pomocniczy=korzen;
 
-  while(pomocniczy->prawy!=0)
+  while(pomocniczy->prawy!=NULL) // zawsze w prawo, dopoki sie tylko da
     pomocniczy=pomocniczy->prawy;
   return pomocniczy->wartosc;
 }
 
+//zwraca najmniejsza wartosc na drzewie
 int Drzewo::Najmniejszy(){
   ED* pomocniczy=korzen;
 
-  while(pomocniczy->lewy!=0)
+  while(pomocniczy->lewy!=NULL) // zawsze w lewo, o ile sie tylko da
     pomocniczy=pomocniczy->lewy;
   return pomocniczy->wartosc;
 }
 
+
+//rekurencyjne przejscie Preorder przez drzewo
 void Drzewo::Preorder(ED* wezel){
-  if(wezel!=0){ //jesli wezel istnieje
-    cout<<wezel->wartosc<<", ";
-    Preorder(wezel->lewy); //przejscie rekurencyjne
-    Preorder(wezel->prawy);
+  if(wezel!=NULL){ //jesli wezel istnieje
+    cout<<wezel->wartosc<<", "; //odwiedzamy wezel
+    Preorder(wezel->lewy); // przechodzimy lewe poddrzewo
+    Preorder(wezel->prawy); // przechodzimy prawe poddrzewo
   }
 }
 
+//rekurencyjne przejscie Postorder przez drzewo
 void Drzewo::Postorder(ED* wezel){
-  if(wezel!=0){
-    if(wezel->lewy!=0) //jesli lewy istnieje
-      Postorder(wezel->lewy);
+  if(wezel!=NULL){
+    if(wezel->lewy!=NULL) //jesli lewy istnieje
+      Postorder(wezel->lewy); //przechodzimy lewe poddrzewo
     if(wezel->prawy!=0) //jeslli prawy
-      Postorder(wezel->prawy);
-    cout<<wezel->wartosc<<", ";
+      Postorder(wezel->prawy); // przechodzimy prawe poddrzewo
+    cout<<wezel->wartosc<<", "; // o odwiedzamy wezel 
   }
 }
 
+// rekurencyjne przejscie Inorder
 void Drzewo::Inorder(ED* wezel){
-  if(wezel!=0){
+  if(wezel!=NULL){ // jesli wezel nie wskazuje na pustke
     if(wezel->lewy!=0) //jesli ma lewego syna
-      Inorder(wezel->lewy);
-    cout<<wezel->wartosc<<", ";
+      Inorder(wezel->lewy); // to przechodzimy lewe poddrzewo
+    cout<<wezel->wartosc<<", "; // odwiedzamy wezel
     if(wezel->prawy!=0) //jesli prawego
-      Inorder(wezel->prawy);}
+      Inorder(wezel->prawy);
+  } // i przechodzimy prawe poddrzewo
 }
 
 void Drzewo::WyswietlMenu(){
@@ -486,7 +482,7 @@ void Drzewo::WyswietlMenu(){
   cout<<"*            8 - postorder                                                *"<<endl;
   cout<<"*            9 - inorder                                                  *"<<endl;
   cout<<"*                                                                         *"<<endl;
-  cout<<"*           10 - sprawdz wysokosz drzewa                                  *"<<endl;
+  cout<<"*           10 - sprawdz wysokosc drzewa                                  *"<<endl;
   cout<<"*           11 - sprawdz, co jest w korzeniu                              *"<<endl;
   cout<<"*                                                                         *"<<endl;
   cout<<"*            0 - koniec                                                   *"<<endl;
@@ -534,9 +530,13 @@ void Drzewo::Obsluz(){
 	cout<<"Brak szukanego elementu"<<endl;
       break;
     case 4://max
+      if(korzen==NULL)
+	cout<<"Drzewo jest puste!"<<endl;
       cout<<"Najwiekszy element drzewa:   "<<Najwiekszy()<<endl;
       break;
     case 5://min
+      if(korzen==NULL)
+	cout<<"Drzewo jest puste!"<<endl;
       cout<<"Najmniejszy element drzewa:  "<<Najmniejszy()<<endl;
       break;
     case 6://zawartosc
@@ -547,20 +547,37 @@ void Drzewo::Obsluz(){
 	cout<<"Drzewo puste!"<<endl;
       break;
     case 7://preorder
+      if(korzen==NULL)
+	cout<<"Drzewo jest puste!"<<endl;
+      else{
       pomocniczy=korzen;
       Preorder(pomocniczy);
+      }
       break;
     case 8://postorder
-      cout<<"Chwilowo nie ma :("<<endl;
+      if(korzen==NULL)
+	cout<<"Drzewo jest puste!"<<endl;
+      else{
+      pomocniczy=korzen;
+      Postorder(pomocniczy);
+      }
       break;
     case 9: //inorder
-      cout<<"Chwilowo nie ma :("<<endl;
+      if(korzen==NULL)
+	cout<<"Drzewo jest puste!"<<endl;
+      else{
+      pomocniczy=korzen;
+      Inorder(pomocniczy);
+      }
       break;
     case 0: //koniec
       break;
     case 10: //wysokosc
       pomocniczy=korzen;
-      cout<<"Wysokosc drzewa:   "<<Wysokosc(pomocniczy)<<endl;
+      if(pomocniczy!=NULL)
+	cout<<"Wysokosc drzewa:   "<<Wysokosc(pomocniczy)<<endl;
+      else
+	cout<<"Drzewo jest puste!"<<endl;
       break;
     case 11: //wartosc w korzeniu
       if(korzen!=0)
@@ -584,7 +601,7 @@ void Drzewo::Obsluz(){
   
 }
 
-
+//testy na drzewie
 void Drzewo::Test111(){
   int ilosc=40;
   int tablicawartosci[40];
@@ -637,7 +654,8 @@ void Drzewo::Test111(){
   Postorder(pomocniczy);
   cout<<endl;
   }
-  
+
+
 void Drzewo::Test112(){
 int ilosc=100000;
   int tablicawartosci[100000];
