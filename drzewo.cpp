@@ -10,10 +10,7 @@ string cr,cl,cp;      // łańcuchy do znaków ramek
 // kod zaczerpniety ze strony internetowej http://eduinf.waw.pl/inf/alg/001_search/0115.php
 void Drzewo::printBT(string sp, string sn, ED* v)
 {
-  cr = cl = cp = "  ";
-  cr[0] = 218; cr[1] = 196;
-  cl[0] = 192; cl[1] = 196;
-  cp[0] = 179;
+
   string s;
 
   if(v)
@@ -30,7 +27,6 @@ void Drzewo::printBT(string sp, string sn, ED* v)
     printBT(s + cp, cl, v->lewy);
   }
 }
-
 
 //rotacja wezlow polaczonych lewymi galeziami
 ED* Drzewo::RotujLL(ED* wezel){
@@ -92,73 +88,19 @@ ED* Drzewo::RotujRR(ED* wezel){
 }
 
 
-//podwojna rotacja 
+//podwojna rotacja prawo-lewo
 ED* Drzewo::RotujRL(ED* wezel){
-  ED* pomocniczy = wezel->prawy;
-  ED* nowy = pomocniczy->lewy;
-  ED* rodzic = wezel->ojciec;
-
-  pomocniczy->lewy = nowy->prawy;
-  
-  if(pomocniczy->lewy != 0) //jesli istnieje lewy syn (a w sumie prawo-lewy wnuk
-    pomocniczy->lewy->ojciec = pomocniczy; // to ustawiamy mu odpowiednio ojca
-  
-  wezel->prawy = nowy->lewy;
-  if(wezel->prawy != 0) // jesli istnieje prawy syn
-    wezel->prawy->ojciec = wezel; //to ustaw odpowiedniego ojca
-  nowy->lewy = wezel;
-  nowy->prawy = pomocniczy;
-  wezel->ojciec = pomocniczy->ojciec = nowy;
-  nowy->ojciec = rodzic;
-  if(rodzic!=0){ //jesli wezel nie byl korzeniem
-    if(rodzic->lewy == wezel)
-      rodzic->lewy = nowy;
-    else
-      rodzic->prawy = nowy;
-  }
-  else
-    korzen = nowy; //jesli byl korzeniem
-
-  // i wspolczynniki rownowagi:
-  wezel->wsprownowagi = Wysokosc(wezel->lewy)-Wysokosc(wezel->prawy);
-  nowy->wsprownowagi = Wysokosc(nowy->lewy)-Wysokosc(nowy->prawy);
-  pomocniczy->wsprownowagi = Wysokosc(pomocniczy->lewy)-Wysokosc(pomocniczy->prawy);
-  
+  ED* nowy;
+  wezel->prawy=RotujLL(wezel->prawy);
+  nowy=RotujRR(wezel);
   return nowy;
 }
 
+//podwojna rotacja lewo-prawo
 ED* Drzewo::RotujLR(ED* wezel){
-  ED* pomocniczy = wezel->lewy;
-  ED* nowy = pomocniczy->prawy;
-  ED* rodzic = wezel->ojciec;
-
-  pomocniczy->prawy = nowy->lewy;
-  
-  if(pomocniczy->prawy!=0) //jesli tstnieje lewo-prawy wnuk
-    pomocniczy->prawy->ojciec = pomocniczy; //to ustawiamy mu ojca
-  
-  wezel->lewy = nowy->prawy;
-  if(wezel->lewy!=NULL) 
-    wezel->lewy->ojciec = wezel;
-  
-  nowy->prawy = wezel;
-  nowy->lewy = pomocniczy;
-  wezel->ojciec = pomocniczy->ojciec = nowy;
-  nowy->ojciec = rodzic;
-  
-  if(rodzic != NULL){ //jesli wezel nie byl korzeniem
-    if(rodzic->lewy == wezel)
-      rodzic->lewy = nowy;
-    else
-      rodzic->prawy = nowy;
-  }
-  else // i jesli wezel byl korzeniem
-    korzen = nowy; //ustaw jako korzen
-
-   // i wspolczynniki rownowagi:
-  wezel->wsprownowagi = Wysokosc(wezel->lewy)-Wysokosc(wezel->prawy);
-  nowy->wsprownowagi = Wysokosc(nowy->lewy)-Wysokosc(nowy->prawy);
-  pomocniczy->wsprownowagi = Wysokosc(pomocniczy->lewy)-Wysokosc(pomocniczy->prawy);
+  ED* nowy;
+  wezel->lewy = RotujRR(wezel->lewy); // najpierw rotacja lewa, zeby przygotowac grunt do prawej
+  nowy = RotujLL(wezel); // i mozna zrotowac LL
   return nowy;
 }
 
@@ -310,7 +252,7 @@ ED* Drzewo::Znajdz(int element){
 }
 
 
-//metoda powstala dzieki duzej pomocy http://eduinf.waw.pl/inf/alg/001_search/0119.php#P2
+//metoda powstala dzieki pomocy http://eduinf.waw.pl/inf/alg/001_search/0119.php#P2
 ED* Drzewo::Usun(ED* wezel)
 {
   ED  *A,*B,*C;
@@ -411,6 +353,7 @@ ED* Drzewo::Usun(ED* wezel)
   return wezel;
 }
 
+
 ED* Drzewo::Usun(int element){
   if(Znajdz(element)==false) //jesli taki element juz jest w drzewie
     return NULL;
@@ -484,6 +427,7 @@ void Drzewo::WyswietlMenu(){
   cout<<"*                                                                         *"<<endl;
   cout<<"*           10 - sprawdz wysokosc drzewa                                  *"<<endl;
   cout<<"*           11 - sprawdz, co jest w korzeniu                              *"<<endl;
+  cout<<"*           12 - usun drzewo                                              *"<<endl;
   cout<<"*                                                                         *"<<endl;
   cout<<"*            0 - koniec                                                   *"<<endl;
   cout<<"*                                                                         *"<<endl;
@@ -494,12 +438,12 @@ void Drzewo::Obsluz(){
   int wybor=193; //cokolwiek, tylko nie 0
   int element;
   ED* pomocniczy;
-  WyswietlMenu();
 
+  cr = cl = cp = "  ";
   cr[0] = 218; cr[1] = 196;
   cl[0] = 192; cl[1] = 196;
   cp[0] = 179;
-
+  WyswietlMenu();
 
   while(wybor!=0){
     cout<<"Twoj wybor:   "<<endl;
@@ -532,16 +476,18 @@ void Drzewo::Obsluz(){
     case 4://max
       if(korzen==NULL)
 	cout<<"Drzewo jest puste!"<<endl;
+      else
       cout<<"Najwiekszy element drzewa:   "<<Najwiekszy()<<endl;
       break;
     case 5://min
       if(korzen==NULL)
 	cout<<"Drzewo jest puste!"<<endl;
+      else
       cout<<"Najmniejszy element drzewa:  "<<Najmniejszy()<<endl;
       break;
     case 6://zawartosc
       pomocniczy=korzen;
-      if(pomocniczy!=0)
+      if(pomocniczy!=NULL)
 	printBT(" ", " ", pomocniczy);
       else
 	cout<<"Drzewo puste!"<<endl;
