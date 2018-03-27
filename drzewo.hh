@@ -15,17 +15,17 @@ struct ED{
 };
 
 class Drzewo{
-public:
+private:
   //atrybuty:
   ED* korzen;
-  
+public:
   //metody:
   Drzewo(){korzen=0;}; //konstruktor
+private:
 
-  void WyswietlMenu();
-  void Obsluz();
+  void WyswietlMenu(); //dziala
   ED* Znajdz(int element); //jest
-  ED* Poprzednik(ED* wezel);
+  ED* Poprzednik(ED* wezel);//dziala
   void printBT(string sp, string sn, ED* v); //zapozyczone
   ED* RotujLL(ED* wezel);     // jest
   ED* RotujRR(ED* wezel);     // jest
@@ -46,6 +46,9 @@ public:
   void Test111();
   void Test112();
   void Test113();
+
+public:
+  void Obsluz();
 };
 
 
